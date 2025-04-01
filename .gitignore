@@ -30,3 +30,12 @@
 *.exe
 *.out
 *.app
+
+# Build artifacts
+/build
+
+# Build system
+/compile_commands.json
+
+# IDE
+.vs
