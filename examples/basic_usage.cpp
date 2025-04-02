@@ -5,7 +5,6 @@
 #include "common/network_headers.hpp"
 #include "ldl/object_deserializer.hpp"
 
-namespace ldl = little_deserialization_library;
 
 namespace little_deserialization_library::deserialization_rules
 {
@@ -52,6 +51,7 @@ int main()
         // TCP Data (Optional, omitted)
     };
 
+    namespace ldl = little_deserialization_library;
     auto packet{std::span{network_bytes}};
     ldl::NetworkPacketDeserializer deserializer{packet};
     auto ether_frame = deserializer.deserialize<eth_header>();

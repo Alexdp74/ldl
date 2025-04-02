@@ -5,7 +5,6 @@
 #include "common/network_headers.hpp"
 #include "ldl/object_deserializer.hpp"
 
-namespace ldl = little_deserialization_library;
 
 namespace little_deserialization_library::deserialization_rules
 {
@@ -20,11 +19,11 @@ namespace little_deserialization_library::deserialization_rules
     };
 }
 
-std::string format_mac_address(uint8_t mac[6]) {
+std::string format_mac_address (uint8_t mac[6]) {
     return std::format("{:X}:{:X}:{:X}:{:X}:{:X}:{:X}", mac[0], mac[1], mac[2], mac[3], mac[4], mac[5]);
 }
 
-std::string format_ip_address(uint32_t ip_address) {
+std::string format_ip_address (uint32_t ip_address) {
     return std::format("{}.{}.{}.{}", (ip_address >> 24) & 0xFF, (ip_address >> 16) & 0xFF, (ip_address >> 8) & 0xFF, ip_address & 0xFF);
 }
 
@@ -37,12 +36,13 @@ int main()
         0x08, 0x00                          // EtherType: IPv4 (0x0800)
     };
 
-    auto packet{ std::span{network_bytes} };
-    ldl::NetworkPacketDeserializer deserializer{ packet };
+    namespace ldl = little_deserialization_library;
+    auto packet{std::span{network_bytes}};
+    ldl::NetworkPacketDeserializer deserializer{packet};
     auto ether_frame = deserializer.deserialize<eth_header_composed>();
 
     std::cout << std::format ("Eth src: {} - Eth dest: {} - Eth type: {}", format_mac_address (ether_frame.src_mac.address),
-                              format_mac_address(ether_frame.dest_mac.address), ether_frame.ethertype) << "\n";
+                              format_mac_address (ether_frame.dest_mac.address), ether_frame.ethertype) << "\n";
 
     return 0;
 }
