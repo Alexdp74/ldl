@@ -152,8 +152,8 @@ namespace little_deserialization_library
     template<concepts::byte_like B, std::endian E> template<typename T> inline T ObjectDeserializer<B, E>::deserialize (void)
     {
         if (static constexpr auto minimum_buffer_length{ObjectDeserializer::deserialization_length<T>()}; buffer_.size() < minimum_buffer_length) {
-            throw std::length_error{std::format ("impossible to deserialize an object of type {}: available bytes {}, minimum required {}",
-                                                  typeid(T).name(), buffer_.size(), minimum_buffer_length)};
+            throw std::length_error{std::format ("impossible to deserialize the requested object; Required bytes: {}; available bytes: {}",
+                                                  minimum_buffer_length, buffer_.size())};
         }
 
         return deserialize_noexcept<T>();
