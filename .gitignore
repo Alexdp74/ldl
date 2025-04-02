@@ -36,6 +36,7 @@
 
 # Build system
 /compile_commands.json
+/CMakeSettings.json
 
 # IDE
 .vs
