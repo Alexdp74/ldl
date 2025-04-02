@@ -41,11 +41,10 @@ target_sources(
 )
 add_subdirectory(include/ldl)
 
-if(LDL_BUILD_TESTS)
-    enable_testing()
-    #add_subdirectory(tests/ldl)
-endif()
-
 if(LDL_BUILD_EXAMPLES)
     add_subdirectory(examples)
+endif()
+
+if(LDL_BUILD_TESTS)
+    add_subdirectory(tests/ldl)
 endif()
