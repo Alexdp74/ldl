@@ -2,6 +2,24 @@
 #include <array>
 
 
+// Ethernet Frame Header
+struct mac
+{
+    static constexpr size_t MAC_ADDRESS_LENGTH{6U};
+
+    template<typename... B> requires(sizeof...(B) == MAC_ADDRESS_LENGTH) mac (B... bytes) noexcept : address{static_cast<uint8_t>(bytes)...} { }
+
+
+    uint8_t address[MAC_ADDRESS_LENGTH];   // MAC Address
+};
+
+struct eth_header_composed
+{
+    mac dest_mac;           // Destination MAC Address
+    mac src_mac;            // Source MAC Address
+    uint16_t ethertype;     // EtherType (e.g., 0x0800 for IPv4)
+};
+
 struct eth_header
 {
     std::array<uint8_t, 6U> dest_mac;   // Destination MAC Address
