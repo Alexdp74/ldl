@@ -15,15 +15,15 @@
 namespace little_deserialization_library
 {
     template<typename T> consteval size_t deserialization_length (void);
-    template<typename T, std::endian E, concepts::byte_like B> requires(!is_any_array<T>) constexpr T deserialize (std::span<B> & packet);
-    template<is_any_array T, std::endian E, concepts::byte_like B> constexpr auto deserialize (std::span<B> & packet);
+    template<typename T, std::endian E, concepts::byte_like B> requires(!concepts::is_any_array<T>) constexpr T deserialize (std::span<B> & packet);
+    template<concepts::is_any_array T, std::endian E, concepts::byte_like B> constexpr auto deserialize (std::span<B> & packet);
 
     template<typename A> consteval auto array_size (void)
     {
-        if constexpr (is_std_array<A>) {
+        if constexpr (concepts::is_std_array<A>) {
             return std::tuple_size_v<A>;
         }
-        else if constexpr (is_bounded_byte_array<A>) {
+        else if constexpr (concepts::is_bounded_byte_array<A>) {
             return std::extent_v<A>;
         }
         else {
@@ -60,10 +60,10 @@ namespace little_deserialization_library
         if constexpr (concepts::non_bool_arithmetic<T>) {
             return sizeof(T);
         }
-        else if constexpr (is_any_array<T>) {
+        else if constexpr (concepts::is_any_array<T>) {
             return array_size<T>();
         }
-        else if constexpr (is_static_extent_byte_span<T>) {
+        else if constexpr (concepts::is_static_extent_byte_span<T>) {
             return T::extent;
         }
         else {
@@ -71,15 +71,15 @@ namespace little_deserialization_library
         }
     }
 
-    template<typename T, std::endian E, concepts::byte_like B> requires(!is_any_array<T>) constexpr T deserialize (std::span<B> & packet)
+    template<typename T, std::endian E, concepts::byte_like B> requires(!concepts::is_any_array<T>) constexpr T deserialize (std::span<B> & packet)
     {
         if constexpr (concepts::non_bool_arithmetic<T>) {
-            const auto value{reader::read<T, E> (packet)};
+            const auto value{reader::read<T, E> (packet.data())};
             packet = packet.template subspan<sizeof(T)>();
 
             return value;
         }
-        else if constexpr (is_static_extent_byte_span<T>) {
+        else if constexpr (concepts::is_static_extent_byte_span<T>) {
             static_assert(!std::is_const_v<B> || std::is_const_v<typename T::element_type>,
                           "cannot convert to a std::span over non-const bytes when the source is const");
             T value{packet.template subspan<0, T::extent>()};
@@ -92,9 +92,9 @@ namespace little_deserialization_library
         }
     }
 
-    template<is_any_array T, std::endian E, concepts::byte_like B> constexpr auto deserialize (std::span<B> & packet)
+    template<concepts::is_any_array T, std::endian E, concepts::byte_like B> constexpr auto deserialize (std::span<B> & packet)
     {
-        static_assert(is_std_array<T> || std::is_const_v<std::remove_extent_t<T>> || !std::is_const_v<B>,
+        static_assert(concepts::is_std_array<T> || std::is_const_v<std::remove_extent_t<T>> || !std::is_const_v<B>,
                       "cannot convert to a non-const c-style byte array when the source is const");
         array_view view{packet.template subspan<0, array_size<T>()>()};
         packet = packet.template subspan<array_size<T>()>();
@@ -140,7 +140,8 @@ namespace little_deserialization_library
         /// </summary>
         /// <typeparam name="T">The type of the object</typeparam>
         /// <returns>The number of bytes that will be read to deserialize an object of type T</returns>
-        template<typename T> static consteval auto deserialization_length (void) { return NOMADSUtil::deserialization_length<T>(); }
+        template<typename T> static consteval auto deserialization_length (void)
+        { return little_deserialization_library::deserialization_length<T>(); }
 
 
     private:
@@ -161,7 +162,7 @@ namespace little_deserialization_library
 
     template<concepts::byte_like B, std::endian E> template<typename T> inline T ObjectDeserializer<B, E>::deserialize_noexcept (void) noexcept
     {
-        return NOMADSUtil::deserialize<T, E> (buffer_);
+        return little_deserialization_library::deserialize<T, E> (buffer_);
     }
 
     template<concepts::byte_like B, std::endian E> constexpr void ObjectDeserializer<B, E>::skip (size_t bytes)

@@ -58,16 +58,16 @@ namespace little_deserialization_library
         template<concepts::swappable_arithmetic T> T swap (T t)
         {
             if constexpr (std::is_floating_point_v<T> && (sizeof(T) == 2)) {
-                return helpers::floating_point_swap<uint16_t> (t);
+                return floating_point_swap<uint16_t> (t);
             }
             if constexpr (std::is_floating_point_v<T> && (sizeof(T) == 4)) {
-                return helpers::floating_point_swap<uint32_t> (t);
+                return floating_point_swap<uint32_t> (t);
             }
             if constexpr (std::is_floating_point_v<T> && (sizeof(T) == 8)) {
-                return helpers::floating_point_swap<uint64_t> (t);
+                return floating_point_swap<uint64_t> (t);
             }
             else {
-                return helpers::integral_swap (t);
+                return integral_swap (t);
             }
         }
 
@@ -86,7 +86,7 @@ namespace little_deserialization_library
         {
             const auto val{reader_helpers::read_no_swap<T> (src)};
             if constexpr ((std::endian::native != E) && concepts::swappable_arithmetic<T>) {
-                return reader_helpers::swap<E> (val);
+                return reader_helpers::swap (val);
             }
             else {
                 return val;
