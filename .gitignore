@@ -33,6 +33,7 @@
 
 # Build artifacts
 /build
+/out
 
 # Build system
 /compile_commands.json
