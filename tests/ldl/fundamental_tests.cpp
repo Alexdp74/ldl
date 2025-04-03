@@ -57,7 +57,7 @@ TEST(DeserializationLittleEndianTest, FieldsExtraction) {
     namespace ldl = little_deserialization_library;
 
     auto packet{std::span{eth_ip_tcp_packet}};
-    ldl::object_deserializer<const unsigned char, std::endian::little> deserializer{packet};
+    ldl::object_deserializer<const uint8_t, std::endian::little> deserializer{packet};
     auto ether_frame = deserializer.deserialize<eth_header>();
     ASSERT_EQ(ether_frame.dest_mac, std::to_array<uint8_t>({0x00, 0x11, 0x22, 0x33, 0x44, 0x55}));
     ASSERT_EQ(ether_frame.src_mac, std::to_array<uint8_t>({0x00, 0x1A, 0x2B, 0x3C, 0x4D, 0x5E}));
@@ -120,4 +120,33 @@ TEST(ConstexprFunctions, GetUnreadBuffer) {
     constexpr auto got_packet{deserializer.get_unread_buffer()};
     ASSERT_EQ(packet.data(), got_packet.data());
     ASSERT_EQ(got_packet.extent, std::dynamic_extent);
+}
+TEST(ConstexprFunctions, DeserializationLength) {
+
+    namespace ldl = little_deserialization_library;
+    using deserializer = ldl::network_packet_deserializer<uint8_t>;
+
+    constexpr auto eth_len{deserializer::deserialization_length<eth_header>()};
+    constexpr auto ip_header_len{deserializer::deserialization_length<ip_header>()};
+    constexpr auto tcp_header_len{deserializer::deserialization_length<tcp_header>()};
+    ASSERT_EQ(eth_len, 14U);
+    ASSERT_EQ(ip_header_len, 20U);
+    ASSERT_EQ(tcp_header_len, 20U);
+}
+
+// Exceptions
+TEST(ExceptionsTests, DeserializeException) {
+
+    namespace ldl = little_deserialization_library;
+    const uint8_t short_buffer[] = {0x00, 0x00, 0x00, 0x00};
+
+    ldl::network_packet_deserializer deserializer{std::span{short_buffer}};
+    try {
+        const auto eth_frame{deserializer.deserialize<eth_header>()};
+        ASSERT_TRUE(false);
+    }
+    catch (const std::length_error &) {
+        std::cerr << "Could not deserialize " << deserializer.deserialization_length<eth_header>() << " bytes from the buffer\n";
+        ASSERT_TRUE(true);
+    }
 }
