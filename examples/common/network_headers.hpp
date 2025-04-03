@@ -9,6 +9,13 @@ struct mac
 
     template<typename... B> requires(sizeof...(B) == MAC_ADDRESS_LENGTH) mac (B... bytes) noexcept : address{static_cast<uint8_t>(bytes)...} { }
 
+    [[nodiscard]] bool friend operator== (const mac & lhs, const mac & rhs) noexcept
+    {
+        return[lhs, rhs]<size_t... Is> (std::index_sequence<Is...>) {
+            return ((lhs.address[Is] == rhs.address[Is]) && ...);
+        } (std::make_index_sequence<MAC_ADDRESS_LENGTH>());
+    }
+
 
     uint8_t address[MAC_ADDRESS_LENGTH];   // MAC Address
 };
