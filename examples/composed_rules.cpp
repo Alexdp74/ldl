@@ -20,11 +20,11 @@ namespace little_deserialization_library::deserialization_rules
 }
 
 std::string format_mac_address (uint8_t mac[6]) {
-    return std::format("{:X}:{:X}:{:X}:{:X}:{:X}:{:X}", mac[0], mac[1], mac[2], mac[3], mac[4], mac[5]);
+    return std::format ("{:X}:{:X}:{:X}:{:X}:{:X}:{:X}", mac[0], mac[1], mac[2], mac[3], mac[4], mac[5]);
 }
 
 std::string format_ip_address (uint32_t ip_address) {
-    return std::format("{}.{}.{}.{}", (ip_address >> 24) & 0xFF, (ip_address >> 16) & 0xFF, (ip_address >> 8) & 0xFF, ip_address & 0xFF);
+    return std::format ("{}.{}.{}.{}", (ip_address >> 24) & 0xFF, (ip_address >> 16) & 0xFF, (ip_address >> 8) & 0xFF, ip_address & 0xFF);
 }
 
 int main()
@@ -46,6 +46,3 @@ int main()
 
     return 0;
 }
-
-// # build example:
-// $ cmake --workflow --preset gcc-14

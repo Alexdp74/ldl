@@ -64,7 +64,7 @@ int main()
                               format_mac_address (ether_frame.src_mac), format_mac_address (ether_frame.dest_mac), ether_frame.ethertype) << "\n";
     std::cout << std::format ("IP src: {} - IP dest: {} - IP Iden: {}",
                               ip_packet.src_ip, ip_packet.dest_ip, ip_packet.identification) << "\n";
-    std::cout << std::format ("TCP src port: {} - TCP dest port: {} - TCP SEQ num: {}, TCP ACK num: {}",
+    std::cout << std::format ("TCP src port: {} - TCP dest port: {} - TCP SEQ num: {}, TCP ACK num: {}\n",
                               tcp_packet.src_port, tcp_packet.dest_port, tcp_packet.seq_number, tcp_packet.ack_number);
 
     return 0;
