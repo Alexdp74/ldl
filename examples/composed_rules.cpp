@@ -38,7 +38,7 @@ int main()
 
     namespace ldl = little_deserialization_library;
     auto packet{std::span{network_bytes}};
-    ldl::NetworkPacketDeserializer deserializer{packet};
+    ldl::network_packet_deserializer deserializer{packet};
     auto ether_frame = deserializer.deserialize<eth_header_composed>();
 
     std::cout << std::format ("Eth src: {} - Eth dest: {} - Eth type: {}", format_mac_address (ether_frame.src_mac.address),

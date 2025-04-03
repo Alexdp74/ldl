@@ -31,7 +31,7 @@ TEST(BasicDeserializationTest, FieldsExtraction) {
     namespace ldl = little_deserialization_library;
 
     auto packet{std::span{eth_ip_tcp_packet}};
-    ldl::NetworkPacketDeserializer deserializer{packet};
+    ldl::network_packet_deserializer deserializer{packet};
     auto ether_frame = deserializer.deserialize<eth_header>();
     ASSERT_EQ(ether_frame.dest_mac, std::to_array<uint8_t> ({0x00, 0x11, 0x22, 0x33, 0x44, 0x55}));
     ASSERT_EQ(ether_frame.src_mac, std::to_array<uint8_t> ({0x00, 0x1A, 0x2B, 0x3C, 0x4D, 0x5E}));
@@ -57,7 +57,7 @@ TEST(DeserializationLittleEndianTest, FieldsExtraction) {
     namespace ldl = little_deserialization_library;
 
     auto packet{std::span{eth_ip_tcp_packet}};
-    ldl::ObjectDeserializer<const unsigned char, std::endian::little> deserializer{packet};
+    ldl::object_deserializer<const unsigned char, std::endian::little> deserializer{packet};
     auto ether_frame = deserializer.deserialize<eth_header>();
     ASSERT_EQ(ether_frame.dest_mac, std::to_array<uint8_t>({0x00, 0x11, 0x22, 0x33, 0x44, 0x55}));
     ASSERT_EQ(ether_frame.src_mac, std::to_array<uint8_t>({0x00, 0x1A, 0x2B, 0x3C, 0x4D, 0x5E}));
@@ -83,7 +83,7 @@ TEST(BasicDeserializationTest, ParsingAndSkip) {
     namespace ldl = little_deserialization_library;
 
     constexpr auto packet{std::span{eth_ip_opt_tcp_seg_packet}};
-    ldl::NetworkPacketDeserializer deserializer{packet};
+    ldl::network_packet_deserializer deserializer{packet};
     deserializer.template skip<eth_header>();
     const auto ip_packet = deserializer.deserialize<ip_header>();
     ASSERT_EQ(format_ip_address(ip_packet.src_ip), "192.168.1.100");
@@ -108,7 +108,7 @@ TEST(ConstexprFunctions, Constructor) {
     namespace ldl = little_deserialization_library;
 
     constexpr auto packet{std::span{eth_ip_opt_tcp_seg_packet}};
-    constexpr ldl::NetworkPacketDeserializer deserializer{packet};
+    constexpr ldl::network_packet_deserializer deserializer{packet};
     ASSERT_TRUE(true);
 }
 TEST(ConstexprFunctions, GetUnreadBuffer) {
@@ -116,7 +116,7 @@ TEST(ConstexprFunctions, GetUnreadBuffer) {
     namespace ldl = little_deserialization_library;
 
     constexpr auto packet{std::span{eth_ip_opt_tcp_seg_packet}};
-    constexpr ldl::NetworkPacketDeserializer deserializer{packet};
+    constexpr ldl::network_packet_deserializer deserializer{packet};
     constexpr auto got_packet{deserializer.get_unread_buffer()};
     ASSERT_EQ(packet.data(), got_packet.data());
     ASSERT_EQ(got_packet.extent, std::dynamic_extent);

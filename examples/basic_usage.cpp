@@ -55,7 +55,7 @@ int main()
 
     namespace ldl = little_deserialization_library;
     auto packet{std::span{network_bytes}};
-    ldl::NetworkPacketDeserializer deserializer{packet};
+    ldl::network_packet_deserializer deserializer{packet};
     auto ether_frame = deserializer.deserialize<eth_header>();
     auto ip_packet = deserializer.deserialize<ip_header>();
     auto tcp_packet = deserializer.deserialize<tcp_header>();
@@ -63,7 +63,7 @@ int main()
     std::cout << std::format ("Eth src: {} - Eth dest: {} - Eth type: {}",
                               format_mac_address (ether_frame.src_mac), format_mac_address (ether_frame.dest_mac), ether_frame.ethertype) << "\n";
     std::cout << std::format ("IP src: {} - IP dest: {} - IP Iden: {}",
-                              format_ip_address (ip_packet.src_ip), format_ip_address (ip_packet.dest_ip), ip_packet.identification) << "\n";
+                              ip_packet.src_ip, ip_packet.dest_ip, ip_packet.identification) << "\n";
     std::cout << std::format ("TCP src port: {} - TCP dest port: {} - TCP SEQ num: {}, TCP ACK num: {}",
                               tcp_packet.src_port, tcp_packet.dest_port, tcp_packet.seq_number, tcp_packet.ack_number);
 
