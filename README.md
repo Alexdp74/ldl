@@ -8,7 +8,7 @@ Three parts are involved in the deserialization of an object:
 3. A deserialization rule, which instructs the library on which fields to extract to call the constructor of the object.
 
 Here is a simple example:
-```
+```cpp
 // File: network_headers.hpp
 #include <cstdint>
 
@@ -28,7 +28,7 @@ struct ip_header
 };
 ```
 
-```
+```cpp
 // File: ldl_deserialization_rules.hpp
 #include <ldl/object_deserializer.hpp">
 
@@ -42,7 +42,7 @@ namespace little_deserialization_library::deserialization_rules
 }
 ```
 
-```
+```cpp
 // File: ldl_example.cpp
 #include <iostream>
 #include <format>
@@ -71,7 +71,7 @@ int main()
 ```
 
 Rules can be composed recursively:
-```
+```cpp
 // File: network_headers.hpp
 #include <cstdint>
 #include <utility>
@@ -101,7 +101,7 @@ struct eth_header_composed
 };
 ```
 
-```
+```cpp
 // File: ldl_composed_deserialization_rules.hpp
 #include <ldl/object_deserializer.hpp">
 
@@ -122,7 +122,7 @@ namespace little_deserialization_library::deserialization_rules
 }
 ```
 
-```
+```cpp
 // File: ldl_compose_example.cpp
 #include <iostream>
 #include <format>
@@ -154,7 +154,7 @@ A valid rule defines a `type` alias that expresses a `std::tuple` of the paramet
 ## Features
 - Deserialization of primitive types from a contiguous byte region, passed in as a `std::span`.
 - Deserialization of `std::span<B, N>`, `std::array<B, N>`, and built-in arrays in the form `B[N]` from a contiguous byte region; `B` must satisfy the `byte-like` concept, defined as:
-  ```
+  ```cpp
   template<typename T> concept byte_like = std::is_same_v<std::remove_cv_t<T>, char> ||
                                            std::is_same_v<std::remove_cv_t<T>, unsigned char> ||
                                            std::is_same_v<std::remove_cv_t<T>, std::byte>;
