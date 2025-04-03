@@ -15,16 +15,16 @@ Here is a simple example:
 // IPv4 Header
 struct ip_header
 {
-    uint8_t  ihl_version;       // Internet Header Length (4-bit) + Version (4-bit, usually 4 for IPv4)
-    uint8_t  dscp_ecn;          // Differentiated Services and ECN
-    uint16_t total_length;      // Total length of the packet (header + data)
-    uint16_t identification;    // Identification field
-    uint16_t flags_frag_offset; // Flags (3 bits) + Fragment Offset (13 bits)
-    uint8_t  ttl;               // Time To Live
-    uint8_t  protocol;          // Protocol (e.g., 6 for TCP)
-    uint16_t checksum;          // Header checksum
-    uint32_t src_ip;            // Source IP Address
-    uint32_t dest_ip;           // Destination IP Address
+    uint8_t  ihl_version;
+    uint8_t  dscp_ecn;
+    uint16_t total_length;
+    uint16_t identification;
+    uint16_t flags_frag_offset;
+    uint8_t  ttl;
+    uint8_t  protocol;
+    uint16_t checksum;
+    uint32_t src_ip;
+    uint32_t dest_ip;
 };
 ```
 
@@ -90,14 +90,14 @@ struct mac
     }
 
 
-    uint8_t address[MAC_ADDRESS_LENGTH];   // MAC Address
+    uint8_t address[MAC_ADDRESS_LENGTH];
 };
 
 struct eth_header_composed
 {
-    mac dest_mac;           // Destination MAC Address
-    mac src_mac;            // Source MAC Address
-    uint16_t ethertype;     // EtherType (e.g., 0x0800 for IPv4)
+    mac dest_mac;
+    mac src_mac;
+    uint16_t ethertype;
 };
 ```
 
