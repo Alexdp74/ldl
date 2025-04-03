@@ -105,7 +105,7 @@ namespace little_deserialization_library
     template<concepts::byte_like B, std::endian E> class ObjectDeserializer
     {
     public:
-        template<size_t N> explicit ObjectDeserializer (std::span<B, N> buffer) noexcept : buffer_{buffer} { }
+        template<size_t N> constexpr explicit ObjectDeserializer (std::span<B, N> buffer) noexcept : buffer_{buffer} { }
 
         /// <summary>
         /// Constructs an object of type T with data in the buffer, possibly using a user-defined deserialization rule.
@@ -125,7 +125,13 @@ namespace little_deserialization_library
         /// Advances the buffer by the specified number of bytes.
         /// </summary>
         /// <param name="bytes">The number of bytes to skip in the buffer</param>
-        constexpr void skip (size_t bytes);
+        void skip (size_t bytes);
+        /// <summary>
+        /// Advances the buffer by the deserialization length of type T.
+        /// Equivalent to skip (deserialization_length<T>());
+        /// </summary>
+        /// <typeparam name="T">The type of object to compute the deserialization length</typeparam>
+        template<typename T> void skip (void);
 
         /// <summary>
         /// Returns a std::span over the first "size" bytes of the unread part of the buffer, or the whole buffer, whichever is smaller.
@@ -150,6 +156,7 @@ namespace little_deserialization_library
 
     template<concepts::byte_like B> using NetworkPacketDeserializer = ObjectDeserializer<B, std::endian::big>;
 
+
     template<concepts::byte_like B, std::endian E> template<typename T> inline T ObjectDeserializer<B, E>::deserialize (void)
     {
         if (static constexpr auto minimum_buffer_length{ObjectDeserializer::deserialization_length<T>()}; buffer_.size() < minimum_buffer_length) {
@@ -165,12 +172,22 @@ namespace little_deserialization_library
         return little_deserialization_library::deserialize<T, E> (buffer_);
     }
 
-    template<concepts::byte_like B, std::endian E> constexpr void ObjectDeserializer<B, E>::skip (size_t bytes)
+    template<concepts::byte_like B, std::endian E> inline void ObjectDeserializer<B, E>::skip (size_t bytes)
     {
         if (buffer_.size() < bytes) {
             throw std::length_error{std::format ("impossible to skip {} bytes: available bytes {}", bytes, buffer_.size())};
         }
 
         buffer_ = buffer_.subspan (bytes);
+    }
+
+    template<concepts::byte_like B, std::endian E> template<typename T> inline void ObjectDeserializer<B, E>::skip (void)
+    {
+        constexpr auto bytes{deserialization_length<T>()};
+        if (buffer_.size() < bytes) {
+            throw std::length_error{std::format ("impossible to skip {} bytes: available bytes {}", bytes, buffer_.size())};
+        }
+
+        buffer_ = buffer_.template subspan<bytes>();
     }
 }
