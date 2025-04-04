@@ -165,6 +165,7 @@ A valid rule defines a `type` alias that expresses a `std::tuple` of the paramet
 - Compile-time calculation of the number of bytes required to deserialize an object of a given type.
 
 ## Future Goals
+- Add support for `std::string` and `std::string_view` with static length;
 - Skip bytes as part of deserialization rules;
 - Construct objects using parameters in part deserialized from the byte array and in part passed in as argument of the `deserialize<T>()` call;
 - Add benchmarks.
